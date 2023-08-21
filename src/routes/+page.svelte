@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { Scanner } from '@credenza-web3/scanner';
-  import {Buffer} from 'buffer';
-  import type {} from '@credenza-web3/scanner/dist/Scanner.types';
 	import { onMount } from 'svelte';
+  import {validateRulesetWithApi, validateRulesetWithWs} from '$lib/credenza/apigw'
 
   type TScannerResult = {
     chainId?: string;
@@ -14,107 +13,111 @@
 
 	const SCANNER_ELEMENT_ID = 'ScannerBlock';
 
-	let clientId: string = ''
-	let clientSecret: string = ''
-  let rulesetId:string = ''
-  let isLoading: boolean
+  let scanner: Scanner;
+	let clientId: string = '64e3539915fae538abcd8ff8'
+	let clientSecret: string = '526be41d49afd13510a8552a6a5dbe90'
+  let rulesetId:string = '64e32d83ece9f357fa5e8720'
+  let isLoading: boolean = false
+  let isUseWebsocket = false
 
   $: {
     if (scanner && isLoading === true) {
       scanner.close()
-    } else if (scanner && isLoading === false) {
-      scanner.scan()
-    }
-  }
-
-	let scanner: Scanner;
-
-  const getApiUrl = (chainId:string | undefined) => {
-    const API_URL = {
-      TESTNETS: 'https://api.testnets.credenza.online',
-      MAINNETS: 'https://api.credenza.online',
-    }
-    switch (chainId) {
-      case '137': return API_URL.MAINNETS;
-      case '80001': return API_URL.TESTNETS;
-      default: throw new Error('Unsupported chainId: ' + chainId)
     }
   }
 
   const checkRuleset = async (data:TScannerResult) => {
-    if (!clientId || !clientSecret || !rulesetId || data.scanType !== 'PASSPORT_ID') return;
-
+    if (data.scanType !== 'PASSPORT_ID' || !data.chainId) return;
     isLoading = true
   
     try {
-      const apiUrl = getApiUrl(data.chainId)
-      const result = await fetch(`${apiUrl}/discounts/rulesets/validate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Basic ${Buffer.from(`${clientId.trim()}:${clientSecret.trim()}`).toString('base64')}`
-        },
-        body: JSON.stringify({
-          ruleSetId: rulesetId,
-          passportId: data.rawString
-        })
-      })
-      if (!result.ok) return;
-      const json = await result.json()
-      alert(`Address: ${json.address}\nCode: ${json.code}`)
-    } catch (_err) {}
-    isLoading = false
+      const requestData = {
+        chainId: data.chainId,
+        clientId,
+        clientSecret,
+        rulesetId,
+        scanned: data.rawString
+      }
+
+      const json = isUseWebsocket ? await validateRulesetWithWs(requestData) : await validateRulesetWithApi(requestData)
+      isLoading = false
+      const requestType = isUseWebsocket ? 'Credenza Websocket' : 'Credenza REST API'
+      alert(`Address: ${json.address}\nCode: ${json.code}\nWith: ${requestType}`)
+    } catch (err) {
+      console.error(err)
+      isLoading = false
+    }
+  }
+
+  const openScanner = () => {
+    if (!clientId || !clientSecret || !rulesetId) return alert('Please fill all required(*) fields');
+    scanner.scan();
   }
 
 	onMount(() => {
 		scanner = new Scanner({ target: '#' + SCANNER_ELEMENT_ID });
     scanner.on(Scanner.events.CAPTURE, checkRuleset);
-    isLoading = false
 	});
 </script>
 
 <main class="p-4">
+  <label
+		class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+		for="sUseWebsocket"
+	>
+		Use Websocket?:
+	</label>
+	<input
+    bind:checked={isUseWebsocket}
+		id="isUseWebsocket"
+		type="checkbox"
+		placeholder="ClientId e.g. 64e32655965e6a076076a935"
+	/>
+
 	<label
 		class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
 		for="clientId"
 	>
-		Client Id:
+		*Client Id:
 	</label>
 	<input
     bind:value={clientId}
 		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 		id="clientId"
 		type="text"
-		placeholder="64e32655965e6a076076a935"
+		placeholder="Client id. e.g. 64e32655965e6a076076a935"
 	/>
 
 	<label
 		class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
 		for="clientSecret"
 	>
-		Client Secret:
+		*Client Secret:
 	</label>
 	<input
     bind:value={clientSecret}
 		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 		id="clientSecret"
 		type="password"
-		placeholder="9a4a645b09b68da197827fbb14e93ecf"
+		placeholder="Client secret. e.g. 9a4a645b09b68da197827fbb14e93ecf"
 	/>
 
   <label
 		class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
 		for="rulesetId"
 	>
-		Ruleset Id:
+		*Ruleset Id:
 	</label>
 	<input
     bind:value={rulesetId}
 		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 		id="rulesetId"
 		type="text"
-		placeholder="542c2b97bac0595474108b48"
+		placeholder="Ruleset id. e.g. 542c2b97bac0595474108b48"
 	/>
+  <button class="bg-blue-500 py-2 px-4 text-white" on:click|preventDefault={openScanner}>
+    Open scanner
+  </button>
   {#if isLoading}
     <div class="text-center">Loading...</div>
   {/if}
