@@ -50,7 +50,7 @@
   }
 
   const openScanner = () => {
-    if (!clientId || !clientSecret || !rulesetId) return alert('Please fill all required(*) fields');
+    if (!clientId || !clientSecret || !rulesetId) return alert('Please fill all *required fields');
     scanner.scan();
   }
 
@@ -82,7 +82,7 @@
 	</label>
 	<input
     bind:value={clientId}
-		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 		id="clientId"
 		type="text"
 		placeholder="Client id. e.g. 64e32655965e6a076076a935"
@@ -96,7 +96,7 @@
 	</label>
 	<input
     bind:value={clientSecret}
-		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 		id="clientSecret"
 		type="password"
 		placeholder="Client secret. e.g. 9a4a645b09b68da197827fbb14e93ecf"
@@ -110,7 +110,7 @@
 	</label>
 	<input
     bind:value={rulesetId}
-		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+		class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 		id="rulesetId"
 		type="text"
 		placeholder="Ruleset id. e.g. 542c2b97bac0595474108b48"
