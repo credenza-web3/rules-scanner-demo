@@ -81,7 +81,6 @@ export const validateRulesetWithWs = async (opts: TValidateRulessetOptions) => {
         const data = JSON.parse(event?.data || '{}')
         if (data.credenzaRequestId !== requestData.credenzaRequestId) return
         socket.close()
-        console.log(data.body)
         resolve(data.body)
       } catch (err) {
         socket.close()
