@@ -14,9 +14,9 @@
 	const SCANNER_ELEMENT_ID = 'ScannerBlock';
 
   let scanner: Scanner;
-	let clientId: string = '64e3539915fae538abcd8ff8'
-	let clientSecret: string = '526be41d49afd13510a8552a6a5dbe90'
-  let rulesetId:string = '64e32d83ece9f357fa5e8720'
+	let clientId: string = ''
+	let clientSecret: string = ''
+  let rulesetId:string = ''
   let isLoading: boolean = false
   let isUseWebsocket = false
 
