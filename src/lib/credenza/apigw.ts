@@ -20,6 +20,9 @@ const getApiUrl = (chainId:string | undefined) => {
   switch (chainId) {
     case '137': return API_URL.MAINNETS;
     case '80001': return API_URL.TESTNETS;
+    case '80002': return API_URL.TESTNETS;
+    case '88888': return API_URL.MAINNETS;
+
     default: throw new Error('Unsupported chainId: ' + chainId)
   }
 }
@@ -49,6 +52,8 @@ const getWsUrl = (chainId:string | undefined) => {
   switch (chainId) {
     case '137': return WS_URL.MAINNETS;
     case '80001': return WS_URL.TESTNETS;
+    case '80002': return WS_URL.TESTNETS;
+    case '88888': return WS_URL.MAINNETS;
     default: throw new Error('Unsupported chainId: ' + chainId)
   }
 }
