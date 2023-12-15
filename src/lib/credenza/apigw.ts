@@ -18,10 +18,10 @@ const getApiUrl = (chainId:string | undefined) => {
     MAINNETS: 'https://api.credenza.online',
   }
   switch (chainId) {
+    case Chains.CHILIZ: 
     case Chains.POLYGON : return API_URL.MAINNETS;
-    case Chains.POLYGON_MUMBAI: return API_URL.TESTNETS;
+    case Chains.POLYGON_MUMBAI: 
     case Chains.CHILIZ_SPICY: return API_URL.TESTNETS;
-    case Chains.CHILIZ: return API_URL.MAINNETS;
 
     default: throw new Error('Unsupported chainId: ' + chainId)
   }
@@ -50,10 +50,10 @@ const getWsUrl = (chainId:string | undefined) => {
     MAINNETS: 'wss://ws.credenza.online',
   }
   switch (chainId) {
-    case '137': return WS_URL.MAINNETS;
-    case '80001': return WS_URL.TESTNETS;
-    case '88882': return WS_URL.TESTNETS;
-    case '88888': return WS_URL.MAINNETS;
+    case Chains.CHILIZ:
+    case Chains.POLYGON: return WS_URL.MAINNETS;
+    case Chains.POLYGON_MUMBAI:
+    case Chains.CHILIZ_SPICY: return WS_URL.TESTNETS;
     ;
     default: throw new Error('Unsupported chainId: ' + chainId)
   }
