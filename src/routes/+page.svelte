@@ -13,7 +13,7 @@
 
 	const SCANNER_ELEMENT_ID = 'ScannerBlock';
 
-	let scanner: typeof Scanner;
+	let scanner: Scanner;
 	let clientId: string = '';
 	let clientSecret: string = '';
 	let rulesetId: string = '';
